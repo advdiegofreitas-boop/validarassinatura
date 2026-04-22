@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validação de Documento</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f5f5f5;
+  text-align: center;
+}
+
+.topo {
+  background: #0f7f79;
+  color: white;
+  padding: 15px;
+  font-size: 20px;
+}
+
+.container {
+  margin-top: 80px;
+}
+
+input {
+  padding: 12px;
+  width: 250px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  padding: 12px 20px;
+  background: #0f7f79;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0c5f5a;
+}
+
+.hidden {
+  display: none;
+}
+
+.sucesso {
+  color: green;
+  font-size: 20px;
+}
+
+.erro {
+  color: red;
+  font-size: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topo">
+  Validação de Documento Oficial
+</div>
+
+<div class="container">
+
+  <input type="text" id="codigo" placeholder="Digite o código de validação">
+  <br><br>
+  <button onclick="validar()">Validar Documento</button>
+
+  <div id="sucesso" class="hidden">
+    <p class="sucesso">Documento válido ✅</p>
+    <p><strong>Nome:</strong> João Batista de Oliveira</p>
+
+    <br>
+    <button onclick="baixarDocumento()">Baixar Documento 📄</button>
+  </div>
+
+  <div id="erro" class="hidden">
+    <p class="erro">Documento não encontrado ❌</p>
+  </div>
+
+</div>
+
+<script>
+function getParametroURL(nome) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(nome);
+}
+
+function validar() {
+  const codigo = document.getElementById("codigo").value || getParametroURL("codigo");
+
+  const banco = {
+    "12345": {
+      nome: "João Batista de Oliveira",
+      arquivo: "docs/documento1.pdf"
+    }
+  };
+
+  if (banco[codigo]) {
+    document.getElementById("sucesso").classList.remove("hidden");
+    document.getElementById("erro").classList.add("hidden");
+
+    window.documentoAtual = banco[codigo].arquivo;
+
+    // download automático (opcional)
+    baixarDocumento();
+  } else {
+    document.getElementById("sucesso").classList.add("hidden");
+    document.getElementById("erro").classList.remove("hidden");
+  }
+}
+
+function baixarDocumento() {
+  if (!window.documentoAtual) return;
+
+  const link = document.createElement("a");
+  link.href = window.documentoAtual;
+  link.download = "documento.pdf";
+  link.click();
+}
+
+// valida automaticamente se vier com ?codigo=
+window.onload = function() {
+  const codigoURL = getParametroURL("codigo");
+  if (codigoURL) {
+    document.getElementById("codigo").value = codigoURL;
+    validar();
+  }
+};
+</script>
+
+</body>
+</html>
